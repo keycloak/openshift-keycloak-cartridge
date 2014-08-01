@@ -1,0 +1,27 @@
+<div class="bs-sidebar col-md-3 clearfix" data-ng-include data-src="'partials/realm-menu.html'"></div>
+<div id="content-area" class="col-md-9" role="main">
+    <ul class="nav nav-tabs nav-tabs-pf">
+        <li><a href="#/realms/{{realm.realm}}/oauth-clients/{{oauth.name}}">Settings</a></li>
+        <li data-ng-show="!oauth.publicClient"><a href="#/realms/{{realm.realm}}/oauth-clients/{{oauth.name}}/credentials">Credentials</a></li>
+        <li class="active"><a href="#/realms/{{realm.realm}}/oauth-clients/{{oauth.name}}/claims">Claims</a></li>
+        <li><a href="#/realms/{{realm.realm}}/oauth-clients/{{oauth.name}}/scope-mappings">Scope</a></li>
+        <li><a href="#/realms/{{realm.realm}}/oauth-clients/{{oauth.name}}/installation">Installation</a></li>
+        <li><a href="#/realms/{{realm.realm}}/oauth-clients/{{oauth.name}}/revocation">Revocation</a></li>
+    </ul>
+    <div id="content">
+        <ol class="breadcrumb" data-ng-hide="create">
+            <li><a href="#/realms/{{realm.realm}}">{{realm.realm}}</a></li>
+            <li><a href="#/realms/{{realm.realm}}/oauth-clients">OAuth Clients</a></li>
+            <li><a href="#/realms/{{realm.realm}}/oauth-clients/{{oauth.id}}">{{oauth.name}}</a></li>
+            <li class="active">Claims</li>
+        </ol>
+        <h2 data-ng-hide="create"><span>{{oauth.name}}</span> Allowed Claims</h2>
+        <form class="form-horizontal" name="claimForm">
+            <div data-ng-include data-src="'partials/claims.html'"></div>
+            <div class="pull-right form-actions" data-ng-show="access.manageClients">
+                <button kc-reset data-ng-show="changed">Clear changes</button>
+                <button kc-save  data-ng-show="changed">Save</button>
+            </div>
+        </form>
+    </div>
+</div>

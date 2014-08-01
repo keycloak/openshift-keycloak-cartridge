@@ -1,0 +1,49 @@
+<div class="bs-sidebar col-md-3 clearfix" data-ng-include data-src="'partials/realm-menu.html'"></div>
+<div id="content-area" class="col-md-9" role="main">
+
+    <ul class="nav nav-tabs nav-tabs-pf"  data-ng-show="!create">
+        <li><a href="#/realms/{{realm.realm}}/applications/{{application.name}}">Settings</a></li>
+        <li data-ng-show="!application.bearerOnly && !application.publicClient"><a href="#/realms/{{realm.realm}}/applications/{{application.name}}/credentials">Credentials</a></li>
+        <li class="active"><a href="#/realms/{{realm.realm}}/applications/{{application.name}}/installation">Installation</a></li>
+        <li><a href="#/realms/{{realm.realm}}/applications/{{application.name}}/roles">Roles</a></li>
+        <li><a href="#/realms/{{realm.realm}}/applications/{{application.name}}/claims">Claims</a></li>
+        <li><a href="#/realms/{{realm.realm}}/applications/{{application.name}}/scope-mappings">Scope</a></li>
+        <li><a href="#/realms/{{realm.realm}}/applications/{{application.name}}/revocation">Revocation</a></li>
+        <li data-ng-show="!application.bearerOnly"><a href="#/realms/{{realm.realm}}/applications/{{application.name}}/sessions">Sessions</a></li>
+    </ul>
+
+    <div id="content">
+        <ol class="breadcrumb" data-ng-hide="create">
+            <li><a href="#/realms/{{realm.realm}}">{{realm.realm}}</a></li>
+            <li><a href="#/realms/{{realm.realm}}/applications">Applications</a></li>
+            <li><a href="#/realms/{{realm.realm}}/applications/{{application.name}}">{{application.name}}</a></li>
+            <li class="active">Installation</li>
+        </ol>
+        <h2><span>{{application.name}}</span> Installation</h2>
+        <form class="form-horizontal" name="realmForm" novalidate>
+            <fieldset class="border-top">
+                <div class="form-group input-select">
+                    <label class="col-sm-2 control-label" for="configFormats">Format Option</label>
+                    <div class="col-sm-4">
+                        <div class="input-group">
+                            <div class="select-kc">
+                                <select id="configFormats" name="configFormats" ng-change="changeFormat()" ng-model="configFormat" ng-options="a for a in configFormats">
+                                    <option value="" selected> Select a Format </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" ng-show="installation">
+                    <div class="col-sm-12">
+                        <textarea class="form-control" rows="20" kc-select-action="click">{{installation}}</textarea>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+
+        <div class="pull-right form-actions" ng-show="installation">
+            <a class="btn btn-primary btn-lg" data-ng-click="download()" type="submit">Download</a>
+        </div>
+    </div>
+</div>

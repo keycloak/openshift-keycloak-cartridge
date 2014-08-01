@@ -1,0 +1,122 @@
+<div class="bs-sidebar col-md-3 clearfix" data-ng-include data-src="'partials/realm-menu.html'"></div>
+<div id="content-area" class="col-md-9" role="main">
+
+    <ul class="nav nav-tabs nav-tabs-pf"  data-ng-show="!create">
+        <li><a href="#/realms/{{realm.realm}}/oauth-clients/{{oauth.name}}">Settings</a></li>
+        <li data-ng-show="!oauth.publicClient"><a href="#/realms/{{realm.realm}}/oauth-clients/{{oauth.name}}/credentials">Credentials</a></li>
+        <li><a href="#/realms/{{realm.realm}}/oauth-clients/{{oauth.name}}/claims">Claims</a></li>
+        <li class="active"><a href="#/realms/{{realm.realm}}/oauth-clients/{{oauth.name}}/scope-mappings">Scope</a></li>
+        <li><a href="#/realms/{{realm.realm}}/oauth-clients/{{oauth.name}}/installation">Installation</a></li>
+        <li><a href="#/realms/{{realm.realm}}/oauth-clients/{{oauth.name}}/revocation">Revocation</a></li>
+    </ul>
+
+    <div id="content">
+        <ol class="breadcrumb" data-ng-hide="create">
+            <li><a href="#/realms/{{realm.realm}}">{{realm.realm}}</a></li>
+            <li><a href="#/realms/{{realm.realm}}/oauth-clients">OAuth Clients</a></li>
+            <li><a href="#/realms/{{realm.realm}}/oauth-clients/{{oauth.name}}">{{oauth.name}}</a></li>
+            <li class="active">Scope</li>
+        </ol>
+        <h2><span>{{oauth.name}}</span> Scope Mappings</h2>
+        <p class="subtitle"></p>
+        <form class="form-horizontal" name="realmForm" novalidate kc-read-only="!access.manageClients">
+            <fieldset>
+                <legend><span class="text">Realm Roles</span></legend>
+                <div class="form-group col-sm-10">
+                    <div class="controls changing-selectors">
+                        <div class="select-title">
+                            <label class="control-label" for="available">Available Roles</label>
+                            <select id="available" class="form-control" multiple size="5"
+                                    ng-multiple="true"
+                                    ng-model="selectedRealmRoles"
+                                    ng-options="r.name for r in realmRoles">
+                            </select>
+                        </div>
+                        <div class="middle-buttons kc-vertical">
+                            <button class="btn btn-default" type="submit" ng-click="addRealmRole()" tooltip="Move right" tooltip-placement="right">
+                                <span class="kc-icon-arrow-right">Move right</span>
+                            </button>
+                            <button class="btn btn-default" type="submit" ng-click="deleteRealmRole()" tooltip="Move left" tooltip-placement="left">
+                                <span class="kc-icon-arrow-left">Move left</span>
+                            </button>
+                        </div>
+                        <div class="select-title">
+                            <label class="control-label" for="assigned">Assigned Roles</label>
+                            <select id="assigned" class="form-control" multiple size=5
+                                    ng-multiple="true"
+                                    ng-model="selectedRealmMappings"
+                                    ng-options="r.name for r in realmMappings">
+                            </select>
+                        </div>
+                        <div class="middle-buttons">
+                            -
+                        </div>
+                        <div class="select-title">
+                            <label class="control-label" for="realm-composite">Effective Roles</label>
+                            <select id="realm-composite" class="form-control" multiple size=5
+                                    ng-disabled="true"
+                                    ng-model="dummymodel"
+                                    ng-options="r.name for r in realmComposite">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset ng-show="applications.length > 0">
+                <legend><span class="text">Application Roles</span> </legend>
+                <div class="form-group input-select">
+                    <label class="col-sm-2 control-label" for="applications">Application</label>
+                    <div class="col-sm-4">
+                        <div class="input-group">
+                            <div class="select-kc">
+                                <select id="applications" name="applications" ng-change="changeApplication()" ng-model="targetApp" ng-options="a.name for a in (applications)" ng-disabled="false">
+                                    <option value="" selected> Select an Application </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" data-ng-show="targetApp">
+                    <div class="controls changing-selectors col-sm-10">
+                        <div class="select-title">
+                            <label class="control-label" for="app-available">Available Roles</label>
+                            <select id="app-available" class="form-control" multiple size="5"
+                                    ng-multiple="true"
+                                    ng-model="selectedApplicationRoles"
+                                    ng-options="r.name for r in applicationRoles">
+                            </select>
+                        </div>
+                        <div class="middle-buttons kc-vertical">
+                            <button class="btn btn-default" type="submit" ng-click="addApplicationRole()" tooltip="Move right" tooltip-placement="right">
+                                <span class="kc-icon-arrow-right">Move right</span>
+                            </button>
+                            <button class="btn btn-default" type="submit" ng-click="deleteApplicationRole()" tooltip="Move left" tooltip-placement="left">
+                                <span class="kc-icon-arrow-left">Move left</span>
+                            </button>
+                        </div>
+                        <div class="select-title">
+                            <label class="control-label" for="app-assigned">Assigned Roles</label>
+                            <select id="app-assigned" class="form-control" multiple size=5
+                                    ng-multiple="true"
+                                    ng-model="selectedApplicationMappings"
+                                    ng-options="r.name for r in applicationMappings">
+                            </select>
+                        </div>
+                        <div class="middle-buttons">
+                            -
+                        </div>
+                        <div class="select-title">
+                            <label class="control-label" for="app-composite">Effective Roles</label>
+                            <select id="app-composite" class="form-control" multiple size=5
+                                    ng-disabled="true"
+                                    ng-model="dummymodel"
+                                    ng-options="r.name for r in applicationComposite">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
