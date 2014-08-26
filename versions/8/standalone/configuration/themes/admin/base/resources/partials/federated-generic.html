@@ -5,11 +5,17 @@
         <li><a href="#/realms/{{realm.realm}}/user-federation">Federation</a></li>
     </ul>
     <div id="content">
-        <ol class="breadcrumb">
-            <li><a href="#/realms/{{realm.realm}}/user-federation">Federation</a></li>
-            <li class="active">User Federation Provider Configuration</li>
+        <ol class="breadcrumb" data-ng-hide="create">
+            <li><a href="#/realms/{{realm.realm}}/user-federation">Federation Providers</a></li>
+            <li><a href="#/realms/{{realm.realm}}/user-federation/providers/{{instance.providerName}}/{{instance.id}}">{{instance.displayName}}</a></li>
+            <li class="active">Provider Settings</li>
         </ol>
-        <h2 class="pull-left"><span>{{realm.realm}}</span> Provider Settings</h2>
+        <ol class="breadcrumb" data-ng-show="create">
+            <li><a href="#/realms/{{realm.realm}}/user-federation">Federation Providers</a></li>
+            <li class="active">Add Federation Provider</li>
+        </ol>
+        <h2 class="pull-left" data-ng-hide="create">Provider Settings</h2>
+        <h2 class="pull-left" data-ng-show="create">Add Federation Provider</h2>
         <p class="subtitle"><span class="required">*</span> Required fields</p>
         <form class="form-horizontal" name="realmForm" novalidate kc-read-only="!access.manageRealm">
 
@@ -43,15 +49,45 @@
 
             </fieldset>
 
+            <fieldset>
+                <legend><span class="text">Sync settings</span></legend>
+                <div class="form-group clearfix">
+                    <label class="col-sm-2 control-label" for="fullSyncEnabled">Periodic full sync</label>
+                    <div class="col-sm-4">
+                        <input ng-model="fullSyncEnabled" name="fullSyncEnabled" id="fullSyncEnabled" onoffswitch />
+                    </div>
+                </div>
+                <div class="form-group clearfix" data-ng-show="fullSyncEnabled">
+                    <label class="col-sm-2 control-label" for="fullSyncPeriod">Full sync period</label>
+                    <div class="col-sm-4">
+                        <input class="form-control" type="number" ng-model="instance.fullSyncPeriod" id="fullSyncPeriod" />
+                    </div>
+                </div>
+                <div class="form-group clearfix">
+                    <label class="col-sm-2 control-label" for="changedSyncEnabled">Periodic changed users sync</label>
+                    <div class="col-sm-4">
+                        <input ng-model="changedSyncEnabled" name="changedSyncEnabled" id="changedSyncEnabled" onoffswitch />
+                    </div>
+                </div>
+                <div class="form-group clearfix" data-ng-show="changedSyncEnabled">
+                    <label class="col-sm-2 control-label" for="changedSyncPeriod">Changed users sync period</label>
+                    <div class="col-sm-4">
+                        <input class="form-control" type="number" ng-model="instance.changedSyncPeriod" id="changedSyncPeriod" />
+                    </div>
+                </div>
+            </fieldset>
+
             <div class="pull-right form-actions" data-ng-show="create && access.manageUsers">
                 <button kc-cancel data-ng-click="cancel()">Cancel</button>
-                <button kc-save data-ng-show="changed">Save</button>
+                <button kc-save>Save</button>
             </div>
 
             <div class="pull-right form-actions" data-ng-show="!create && access.manageUsers">
                 <button kc-reset data-ng-show="changed">Clear changes</button>
                 <button kc-save  data-ng-show="changed">Save</button>
                 <button kc-delete data-ng-click="remove()" data-ng-hide="changed">Delete</button>
+                <button kc-delete data-ng-click="triggerFullSync()" data-ng-hide="changed">Synchronize all users</button>
+                <button kc-delete data-ng-click="triggerChangedUsersSync()" data-ng-hide="changed">Synchronize changed users</button>
             </div>
         </form>
     </div>

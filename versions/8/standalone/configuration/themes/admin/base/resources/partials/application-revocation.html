@@ -3,16 +3,17 @@
     <ul class="nav nav-tabs nav-tabs-pf"  data-ng-show="!create">
         <li><a href="#/realms/{{realm.realm}}/applications/{{application.name}}">Settings</a></li>
         <li data-ng-show="!application.bearerOnly && !application.publicClient"><a href="#/realms/{{realm.realm}}/applications/{{application.name}}/credentials">Credentials</a></li>
-        <li><a href="#/realms/{{realm.realm}}/applications/{{application.name}}/installation">Installation</a></li>
         <li><a href="#/realms/{{realm.realm}}/applications/{{application.name}}/roles">Roles</a></li>
         <li><a href="#/realms/{{realm.realm}}/applications/{{application.name}}/claims">Claims</a></li>
         <li><a href="#/realms/{{realm.realm}}/applications/{{application.name}}/scope-mappings">Scope</a></li>
         <li class="active"><a href="#/realms/{{realm.realm}}/applications/{{application.name}}/revocation">Revocation</a></li>
         <li data-ng-show="!application.bearerOnly"><a href="#/realms/{{realm.realm}}/applications/{{application.name}}/sessions">Sessions</a></li>
+        <li><a href="#/realms/{{realm.realm}}/applications/{{application.name}}/installation">Installation</a></li>
     </ul>
     <div id="content">
         <ol class="breadcrumb">
-            <li><a href="#/realms/{{realm.realm}}/applications/{{application.name}}/">{{realm.realm}}</a></li>
+            <li><a href="#/realms/{{realm.realm}}/applications">Applications</a></li>
+            <li><a href="#/realms/{{realm.realm}}/applications/{{application.name}}">{{application.name}}</a></li>
             <li class="active">Revocation</li>
         </ol>
         <h2 data-ng-hide="create"><span>{{application.name}}</span> Revocation Policies</h2>
@@ -23,6 +24,7 @@
                     <div class="col-sm-4">
                         <input ng-disabled="true" class="form-control" type="text" id="notBefore" name="notBefore" data-ng-model="notBefore" autofocus>
                     </div>
+                    <span tooltip-placement="right" tooltip="Revoke any tokens issued before this date for this application." class="fa fa-info-circle"></span>
                 </div>
             </fieldset>
             <div class="pull-right form-actions" data-ng-show="access.manageApplications">
@@ -30,7 +32,7 @@
                 </button>
                 <button type="submit" data-ng-click="setNotBeforeNow()" class="btn btn-primary btn-lg">Set To Now
                 </button>
-                <button type="submit" data-ng-click="pushRevocation()" class="btn btn-primary btn-lg">Push
+                <button type="submit" data-ng-click="pushRevocation()" class="btn btn-primary btn-lg" tooltip="If admin URL is configured for this application, push this policy to that application." tooltip-placement="bottom">Push
                 </button>
             </div>
         </form>

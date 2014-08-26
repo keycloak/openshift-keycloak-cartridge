@@ -247,12 +247,12 @@ module.controller('RealmDetailCtrl', function($scope, Current, Realm, realm, ser
             }
         }
         /*
-        if (Current.realm == null || Current.realm.realm != realm.realm) {
-            console.log('should be unreachable');
-            console.log('Why? ' + Current.realms.length + ' ' + Current.realm);
-            return;
-        }
-        */
+         if (Current.realm == null || Current.realm.realm != realm.realm) {
+         console.log('should be unreachable');
+         console.log('Why? ' + Current.realms.length + ' ' + Current.realm);
+         return;
+         }
+         */
         $scope.realm = angular.copy(realm);
     }
 
@@ -330,6 +330,72 @@ module.controller('RealmDetailCtrl', function($scope, Current, Realm, realm, ser
             });
         });
     };
+});
+
+function genericRealmUpdate($scope, Current, Realm, realm, serverInfo, $http, $location, Dialog, Notifications, url) {
+    $scope.realm = angular.copy(realm);
+    $scope.serverInfo = serverInfo;
+    $scope.social = $scope.realm.social;
+    $scope.registrationAllowed = $scope.realm.registrationAllowed;
+
+    var oldCopy = angular.copy($scope.realm);
+
+    $scope.changed = false;
+
+    $scope.$watch('realm', function() {
+        if (!angular.equals($scope.realm, oldCopy)) {
+            $scope.changed = true;
+        }
+    }, true);
+
+    $scope.save = function() {
+        var realmCopy = angular.copy($scope.realm);
+        console.log('updating realm...');
+        $scope.changed = false;
+        console.log('oldCopy.realm - ' + oldCopy.realm);
+        Realm.update({ id : oldCopy.realm}, realmCopy, function () {
+            var data = Realm.query(function () {
+                Current.realms = data;
+                for (var i = 0; i < Current.realms.length; i++) {
+                    if (Current.realms[i].realm == realmCopy.realm) {
+                        Current.realm = Current.realms[i];
+                        oldCopy = angular.copy($scope.realm);
+                    }
+                }
+            });
+            $location.url(url);
+            Notifications.success("Your changes have been saved to the realm.");
+            $scope.social = $scope.realm.social;
+            $scope.registrationAllowed = $scope.realm.registrationAllowed;
+        });
+    };
+
+    $scope.reset = function() {
+        $scope.realm = angular.copy(oldCopy);
+        $scope.changed = false;
+    };
+
+    $scope.cancel = function() {
+        //$location.url("/realms");
+        window.history.back();
+    };
+
+}
+
+module.controller('DefenseHeadersCtrl', function($scope, Current, Realm, realm, serverInfo, $http, $location, Dialog, Notifications) {
+    genericRealmUpdate($scope, Current, Realm, realm, serverInfo, $http, $location, Dialog, Notifications, "/realms/" + realm.realm + "/defense/headers");
+});
+
+module.controller('RealmLoginSettingsCtrl', function($scope, Current, Realm, realm, serverInfo, $http, $location, Dialog, Notifications) {
+    genericRealmUpdate($scope, Current, Realm, realm, serverInfo, $http, $location, Dialog, Notifications, "/realms/" + realm.realm + "/login-settings");
+});
+
+module.controller('RealmThemeCtrl', function($scope, Current, Realm, realm, serverInfo, $http, $location, Dialog, Notifications) {
+    genericRealmUpdate($scope, Current, Realm, realm, serverInfo, $http, $location, Dialog, Notifications, "/realms/" + realm.realm + "/theme-settings");
+});
+
+module.controller('RealmCacheCtrl', function($scope, Current, Realm, realm, serverInfo, $http, $location, Dialog, Notifications) {
+    genericRealmUpdate($scope, Current, Realm, realm, serverInfo, $http, $location, Dialog, Notifications, "/realms/" + realm.realm + "/cache-settings");
 });
 
 module.controller('RealmRequiredCredentialsCtrl', function($scope, Realm, realm, $http, $location, Dialog, Notifications, PasswordPolicy) {
@@ -694,7 +760,7 @@ module.controller('RealmKeysDetailCtrl', function($scope, Realm, realm, $http, $
     };
 });
 
-module.controller('RealmSessionStatsCtrl', function($scope, realm, stats, RealmSessionStats, RealmLogoutAll, Notifications) {
+module.controller('RealmSessionStatsCtrl', function($scope, realm, stats, RealmApplicationSessionStats, RealmLogoutAll, Notifications) {
     $scope.realm = realm;
     $scope.stats = stats;
 
@@ -703,7 +769,7 @@ module.controller('RealmSessionStatsCtrl', function($scope, realm, stats, RealmS
     $scope.logoutAll = function() {
         RealmLogoutAll.save({realm : realm.realm}, function () {
             Notifications.success('Logged out all users');
-            RealmSessionStats.get({realm: realm.realm}, function(updated) {
+            RealmApplicationSessionStats.get({realm: realm.realm}, function(updated) {
                 Notifications.success('Logged out all users');
                 $scope.stats = updated;
             })
@@ -889,185 +955,6 @@ module.controller('RealmSMTPSettingsCtrl', function($scope, Current, Realm, real
 
         return obj;
     }
-});
-
-module.controller('RealmLDAPSettingsCtrl', function($scope, $location, Notifications, Realm, realm, RealmLDAPConnectionTester) {
-    console.log('RealmLDAPSettingsCtrl');
-
-    $scope.ldapVendors = [
-        { "id": "ad", "name": "Active Directory" },
-        { "id": "rhds", "name": "Red Hat Directory Server" },
-        { "id": "other", "name": "Other" }
-    ];
-
-    $scope.usernameLDAPAttributes = [
-        "uid", "cn", "sAMAccountName"
-    ];
-
-    $scope.realm = realm;
-
-    var oldCopy = angular.copy($scope.realm);
-    $scope.changed = false;
-
-    $scope.lastVendor = realm.ldapServer.vendor;
-
-    $scope.$watch('realm', function() {
-        if (!angular.equals($scope.realm, oldCopy)) {
-            $scope.changed = true;
-        }
-
-        if (!angular.equals($scope.realm.ldapServer.vendor, $scope.lastVendor)) {
-            console.log("LDAP vendor changed");
-            $scope.lastVendor = $scope.realm.ldapServer.vendor;
-
-            if ($scope.lastVendor === "ad") {
-                $scope.realm.ldapServer.usernameLDAPAttribute = "cn";
-                $scope.realm.ldapServer.userObjectClasses = "person, organizationalPerson";
-            } else {
-                $scope.realm.ldapServer.usernameLDAPAttribute = "uid";
-                $scope.realm.ldapServer.userObjectClasses = "inetOrgPerson, organizationalPerson";
-            }
-        }
-    }, true);
-
-    $scope.save = function() {
-        var realmCopy = angular.copy($scope.realm);
-        $scope.changed = false;
-        Realm.update(realmCopy, function () {
-            $location.url("/realms/" + realm.realm + "/ldap-settings");
-            Notifications.success("Your changes have been saved to the realm.");
-        });
-    };
-
-    $scope.reset = function() {
-        $scope.realm = angular.copy(oldCopy);
-        $scope.changed = false;
-        $scope.lastVendor = $scope.realm.ldapServer.vendor;
-    };
-
-    var initConnectionTest = function(testAction, ldapConfig) {
-        return {
-            action: testAction,
-            realm: $scope.realm.realm,
-            connectionUrl: ldapConfig.connectionUrl,
-            bindDn: ldapConfig.bindDn,
-            bindCredential: ldapConfig.bindCredential
-        };
-    };
-
-    $scope.testConnection = function() {
-        console.log('RealmLDAPSettingsCtrl: testConnection');
-        RealmLDAPConnectionTester.get(initConnectionTest("testConnection", $scope.realm.ldapServer), function() {
-            Notifications.success("LDAP connection successful.");
-        }, function() {
-            Notifications.error("Error when trying to connect to LDAP. See server.log for details.");
-        });
-    }
-
-    $scope.testAuthentication = function() {
-        console.log('RealmLDAPSettingsCtrl: testAuthentication');
-        RealmLDAPConnectionTester.get(initConnectionTest("testAuthentication", $scope.realm.ldapServer), function() {
-            Notifications.success("LDAP authentication successful.");
-        }, function() {
-            Notifications.error("LDAP authentication failed. See server.log for details");
-        });
-    }
-});
-
-module.controller('RealmAuthSettingsCtrl', function($scope, realm) {
-    console.log('RealmAuthSettingsCtrl');
-
-    $scope.realm = realm;
-    $scope.authenticationProviders = realm.authenticationProviders;
-});
-
-module.controller('RealmAuthSettingsDetailCtrl', function($scope, $routeParams, $location, Notifications, Dialog, Realm, realm, serverInfo) {
-    console.log('RealmAuthSettingsDetailCtrl');
-
-    $scope.realm = realm;
-    $scope.availableProviders = serverInfo.authProviders;
-    $scope.availableProviderNames = Object.keys(serverInfo.authProviders);
-
-    $scope.create = !$routeParams.index;
-    $scope.changed = false;
-
-    if ($scope.create) {
-        $scope.authProvider = {
-            passwordUpdateSupported: true,
-            config: {}
-        };
-
-        $scope.authProviderOptionNames = [];
-    } else {
-        $scope.authProvider = realm.authenticationProviders[ $routeParams.index ];
-        if (!$scope.authProvider.config) {
-            $scope.authProvider.config = {};
-        }
-
-        $scope.authProviderOptionNames = serverInfo.authProviders[ $scope.authProvider.providerName ];
-        $scope.authProviderIndex = $routeParams.index;
-    }
-
-    var oldCopy = angular.copy($scope.authProvider);
-    $scope.$watch('authProvider', function() {
-        if (!angular.equals($scope.authProvider, oldCopy)) {
-            $scope.changed = true;
-        }
-    }, true);
-
-    $scope.changeAuthProvider = function() {
-        console.log('RealmAuthSettingsDetailCtrl: provider changed to ' + $scope.authProvider.providerName);
-        $scope.authProviderOptionNames = serverInfo.authProviders[ $scope.authProvider.providerName ];
-    }
-
-    $scope.cancel = function() {
-        $location.url("/realms/" + realm.realm + "/auth-settings");
-    }
-
-    $scope.reset = function() {
-        $scope.authProvider = angular.copy(oldCopy);
-        $scope.changed = false;
-    }
-
-    $scope.save = function() {
-        if (!$scope.authProvider.providerName) {
-            console.log('RealmAuthSettingsDetailCtrl: no provider selected. Skip creation');
-            return;
-        }
-
-        console.log('RealmAuthSettingsDetailCtrl: creating provider ' + $scope.authProvider.providerName);
-        var realmCopy = angular.copy($scope.realm);
-        if (!realmCopy.authenticationProviders) {
-            realmCopy.authenticationProviders = [];
-        }
-
-        if ($scope.create) {
-            realmCopy.authenticationProviders.push($scope.authProvider);
-        } else {
-            realmCopy.authenticationProviders[ $scope.authProviderIndex ] = $scope.authProvider;
-        }
-
-        $scope.changed = false;
-        Realm.update(realmCopy, function () {
-            $location.url("/realms/" + realm.realm + "/auth-settings");
-            Notifications.success("Authentication provider has been saved.");
-        });
-    };
-
-    $scope.remove = function() {
-        Dialog.confirmDelete($scope.realm.authenticationProviders.providerName, 'authentication Provider', function() {
-            console.log('RealmAuthSettingsDetailCtrl: deleting provider ' + $scope.authProvider.providerName);
-
-            var realmCopy = angular.copy($scope.realm);
-            realmCopy.authenticationProviders.splice($scope.authProviderIndex, 1);
-
-            $scope.changed = false;
-            Realm.update(realmCopy, function () {
-                $location.url("/realms/" + realm.realm + "/auth-settings");
-                Notifications.success("Authentication provider has been deleted.");
-            });
-        });
-    };
 });
 
 module.controller('RealmAuditCtrl', function($scope, auditConfig, RealmAudit, RealmAuditEvents, realm, serverInfo, $location, Notifications, TimeUnit, Dialog) {

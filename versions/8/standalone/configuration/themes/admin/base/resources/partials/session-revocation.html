@@ -2,15 +2,11 @@
 <div id="content-area" class="col-md-9" role="main">
     <ul class="nav nav-tabs nav-tabs-pf"  data-ng-show="!create">
         <li><a href="#/realms/{{realm.realm}}/sessions/realm">Realm Sessions</a></li>
-        <li><a href="#/realms/{{realm.realm}}/token-settings">Token Settings</a></li>
+        <li><a href="#/realms/{{realm.realm}}/token-settings">Timeout Settings</a></li>
         <li class="active"><a href="#/realms/{{realm.realm}}/sessions/revocation">Revocation</a></li>
-        <li><a href="#/realms/{{realm.realm}}/sessions/brute-force">Brute Force</a></li>
     </ul>
+    <h2></h2>
     <div id="content">
-        <ol class="breadcrumb">
-            <li><a href="#/realms/{{realm.realm}}">{{realm.realm}}</a></li>
-            <li class="active">Revocation</li>
-        </ol>
         <h2 data-ng-hide="create"><span>{{realm.realm}}</span> Revocation Policies</h2>
         <form class="form-horizontal" name="credentialForm" novalidate kc-read-only="!access.manageRealm">
             <fieldset class="border-top">
@@ -19,6 +15,7 @@
                     <div class="col-sm-4">
                         <input ng-disabled="true" class="form-control" type="text" id="notBefore" name="notBefore" data-ng-model="notBefore" autofocus>
                     </div>
+                    <span tooltip-placement="right" tooltip="Revoke any tokens issued before this date." class="fa fa-info-circle"></span>
                 </div>
             </fieldset>
             <div class="pull-right form-actions" data-ng-show="access.manageApplications">
@@ -26,7 +23,7 @@
                 </button>
                 <button type="submit" data-ng-click="setNotBeforeNow()" class="btn btn-primary btn-lg">Set To Now
                 </button>
-                <button type="submit" data-ng-click="pushRevocation()" class="btn btn-primary btn-lg">Push
+                <button type="submit" data-ng-click="pushRevocation()" class="btn btn-primary btn-lg" tooltip="For every application that has an admin URL, notify them of the new revocation policy." tooltip-placement="bottom">Push
                 </button>
             </div>
         </form>

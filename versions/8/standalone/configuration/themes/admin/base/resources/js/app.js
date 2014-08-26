@@ -94,6 +94,42 @@ module.config([ '$routeProvider', function($routeProvider) {
             },
             controller : 'RealmDetailCtrl'
         })
+        .when('/realms/:realm/login-settings', {
+            templateUrl : 'partials/realm-login-settings.html',
+            resolve : {
+                realm : function(RealmLoader) {
+                    return RealmLoader();
+                },
+                serverInfo : function(ServerInfoLoader) {
+                    return ServerInfoLoader();
+                }
+            },
+            controller : 'RealmLoginSettingsCtrl'
+        })
+        .when('/realms/:realm/theme-settings', {
+            templateUrl : 'partials/realm-theme-settings.html',
+            resolve : {
+                realm : function(RealmLoader) {
+                    return RealmLoader();
+                },
+                serverInfo : function(ServerInfoLoader) {
+                    return ServerInfoLoader();
+                }
+            },
+            controller : 'RealmThemeCtrl'
+        })
+        .when('/realms/:realm/cache-settings', {
+            templateUrl : 'partials/realm-cache-settings.html',
+            resolve : {
+                realm : function(RealmLoader) {
+                    return RealmLoader();
+                },
+                serverInfo : function(ServerInfoLoader) {
+                    return ServerInfoLoader();
+                }
+            },
+            controller : 'RealmCacheCtrl'
+        })
         .when('/realms', {
             templateUrl : 'partials/realm-list.html',
             controller : 'RealmListCtrl'
@@ -161,15 +197,6 @@ module.config([ '$routeProvider', function($routeProvider) {
             },
             controller : 'RealmSMTPSettingsCtrl'
         })
-        .when('/realms/:realm/ldap-settings', {
-            templateUrl : 'partials/realm-ldap.html',
-            resolve : {
-                realm : function(RealmLoader) {
-                    return RealmLoader();
-                }
-            },
-            controller : 'RealmLDAPSettingsCtrl'
-        })
         .when('/realms/:realm/audit', {
             templateUrl : 'partials/realm-audit.html',
             resolve : {
@@ -193,39 +220,6 @@ module.config([ '$routeProvider', function($routeProvider) {
                 }
             },
             controller : 'RealmAuditCtrl'
-        })
-        .when('/realms/:realm/auth-settings', {
-            templateUrl : 'partials/realm-auth-list.html',
-            resolve : {
-                realm : function(RealmLoader) {
-                    return RealmLoader();
-                }
-            },
-            controller : 'RealmAuthSettingsCtrl'
-        })
-        .when('/realms/:realm/auth-settings/create', {
-            templateUrl : 'partials/realm-auth-detail.html',
-            resolve : {
-                realm : function(RealmLoader) {
-                    return RealmLoader();
-                },
-                serverInfo : function(ServerInfoLoader) {
-                    return ServerInfoLoader();
-                }
-            },
-            controller : 'RealmAuthSettingsDetailCtrl'
-        })
-        .when('/realms/:realm/auth-settings/:index', {
-            templateUrl : 'partials/realm-auth-detail.html',
-            resolve : {
-                realm : function(RealmLoader) {
-                    return RealmLoader();
-                },
-                serverInfo : function(ServerInfoLoader) {
-                    return ServerInfoLoader();
-                }
-            },
-            controller : 'RealmAuthSettingsDetailCtrl'
         })
         .when('/create/user/:realm', {
             templateUrl : 'partials/user-detail.html',
@@ -681,16 +675,7 @@ module.config([ '$routeProvider', function($routeProvider) {
             },
             controller : 'RealmRevocationCtrl'
         })
-        .when('/realms/:realm/sessions/brute-force', {
-            templateUrl : 'partials/session-brute-force.html',
-            resolve : {
-                realm : function(RealmLoader) {
-                    return RealmLoader();
-                }
-            },
-            controller : 'RealmBruteForceCtrl'
-        })
-        .when('/realms/:realm/sessions/realm', {
+         .when('/realms/:realm/sessions/realm', {
             templateUrl : 'partials/session-realm.html',
             resolve : {
                 realm : function(RealmLoader) {
@@ -766,6 +751,28 @@ module.config([ '$routeProvider', function($routeProvider) {
                 }
             },
             controller : 'GenericUserFederationCtrl'
+        })
+        .when('/realms/:realm/defense/headers', {
+            templateUrl : 'partials/defense-headers.html',
+            resolve : {
+                realm : function(RealmLoader) {
+                    return RealmLoader();
+                },
+                serverInfo : function(ServerInfoLoader) {
+                    return ServerInfoLoader();
+                }
+
+            },
+            controller : 'DefenseHeadersCtrl'
+        })
+        .when('/realms/:realm/defense/brute-force', {
+            templateUrl : 'partials/brute-force.html',
+            resolve : {
+                realm : function(RealmLoader) {
+                    return RealmLoader();
+                }
+            },
+            controller : 'RealmBruteForceCtrl'
         })
         .when('/logout', {
             templateUrl : 'partials/home.html',
