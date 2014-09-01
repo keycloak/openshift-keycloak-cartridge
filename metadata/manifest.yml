@@ -1,6 +1,6 @@
 Name: wildfly
 Cartridge-Short-Name: WILDFLY
-Display-Name: Keycloak 1.0.0.Beta4-SNAPSHOT
+Display-Name: Keycloak 1.0-rc2
 Description: "Authentication and Authorization Server."
 Version: '8'
 License: LGPL
