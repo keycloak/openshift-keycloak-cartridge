@@ -57,7 +57,6 @@ module.factory('authInterceptor', function($q, Auth) {
 
 
 module.config([ '$routeProvider', function($routeProvider) {
-
     $routeProvider
         /*
         .when('/create/realm', {
@@ -441,6 +440,78 @@ module.config([ '$routeProvider', function($routeProvider) {
             },
             controller : 'ApplicationCredentialsCtrl'
         })
+        .when('/realms/:realm/applications/:application/clustering', {
+            templateUrl : 'partials/application-clustering.html',
+            resolve : {
+                realm : function(RealmLoader) {
+                    return RealmLoader();
+                },
+                application : function(ApplicationLoader) {
+                    return ApplicationLoader();
+                }
+            },
+            controller : 'ApplicationClusteringCtrl'
+        })
+        .when('/register-node/realms/:realm/applications/:application/clustering', {
+            templateUrl : 'partials/application-clustering-node.html',
+            resolve : {
+                realm : function(RealmLoader) {
+                    return RealmLoader();
+                },
+                application : function(ApplicationLoader) {
+                    return ApplicationLoader();
+                }
+            },
+            controller : 'ApplicationClusteringNodeCtrl'
+        })
+        .when('/realms/:realm/applications/:application/clustering/:node', {
+            templateUrl : 'partials/application-clustering-node.html',
+            resolve : {
+                realm : function(RealmLoader) {
+                    return RealmLoader();
+                },
+                application : function(ApplicationLoader) {
+                    return ApplicationLoader();
+                }
+            },
+            controller : 'ApplicationClusteringNodeCtrl'
+        })
+        .when('/realms/:realm/applications/:application/saml/keys', {
+            templateUrl : 'partials/application-saml-keys.html',
+            resolve : {
+                realm : function(RealmLoader) {
+                    return RealmLoader();
+                },
+                application : function(ApplicationLoader) {
+                    return ApplicationLoader();
+                }
+            },
+            controller : 'ApplicationSamlKeyCtrl'
+        })
+        .when('/realms/:realm/applications/:application/saml/:keyType/import/:attribute', {
+            templateUrl : 'partials/application-saml-key-import.html',
+            resolve : {
+                realm : function(RealmLoader) {
+                    return RealmLoader();
+                },
+                application : function(ApplicationLoader) {
+                    return ApplicationLoader();
+                }
+            },
+            controller : 'ApplicationCertificateImportCtrl'
+        })
+        .when('/realms/:realm/applications/:application/saml/:keyType/export/:attribute', {
+            templateUrl : 'partials/application-saml-key-export.html',
+            resolve : {
+                realm : function(RealmLoader) {
+                    return RealmLoader();
+                },
+                application : function(ApplicationLoader) {
+                    return ApplicationLoader();
+                }
+            },
+            controller : 'ApplicationCertificateExportCtrl'
+        })
         .when('/realms/:realm/applications/:application/roles', {
             templateUrl : 'partials/application-role-list.html',
             resolve : {
@@ -506,6 +577,9 @@ module.config([ '$routeProvider', function($routeProvider) {
                 },
                 application : function() {
                     return {};
+                },
+                serverInfo : function(ServerInfoLoader) {
+                    return ServerInfoLoader();
                 }
             },
             controller : 'ApplicationDetailCtrl'
@@ -521,6 +595,9 @@ module.config([ '$routeProvider', function($routeProvider) {
                 },
                 application : function(ApplicationLoader) {
                     return ApplicationLoader();
+                },
+                serverInfo : function(ServerInfoLoader) {
+                    return ServerInfoLoader();
                 }
             },
             controller : 'ApplicationDetailCtrl'
@@ -533,9 +610,25 @@ module.config([ '$routeProvider', function($routeProvider) {
                 },
                 applications : function(ApplicationListLoader) {
                     return ApplicationListLoader();
+                },
+                serverInfo : function(ServerInfoLoader) {
+                    return ServerInfoLoader();
                 }
+
             },
             controller : 'ApplicationListCtrl'
+        })
+        .when('/import/application/:realm', {
+            templateUrl : 'partials/application-import.html',
+            resolve : {
+                realm : function(RealmLoader) {
+                    return RealmLoader();
+                },
+                serverInfo : function(ServerInfoLoader) {
+                    return ServerInfoLoader();
+                }
+            },
+            controller : 'ApplicationImportCtrl'
         })
 
         // OAUTH Client

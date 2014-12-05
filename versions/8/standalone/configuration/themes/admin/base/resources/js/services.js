@@ -311,7 +311,7 @@ module.factory('AvailableRealmRoleMapping', function($resource) {
 
 
 module.factory('ApplicationRoleMapping', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/users/:userId/role-mappings/applications/:application', {
+    return $resource(authUrl + '/admin/realms/:realm/users/:userId/role-mappings/applications-by-id/:application', {
         realm : '@realm',
         userId : '@userId',
         application : "@application"
@@ -319,7 +319,7 @@ module.factory('ApplicationRoleMapping', function($resource) {
 });
 
 module.factory('AvailableApplicationRoleMapping', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/users/:userId/role-mappings/applications/:application/available', {
+    return $resource(authUrl + '/admin/realms/:realm/users/:userId/role-mappings/applications-by-id/:application/available', {
         realm : '@realm',
         userId : '@userId',
         application : "@application"
@@ -327,7 +327,7 @@ module.factory('AvailableApplicationRoleMapping', function($resource) {
 });
 
 module.factory('CompositeApplicationRoleMapping', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/users/:userId/role-mappings/applications/:application/composite', {
+    return $resource(authUrl + '/admin/realms/:realm/users/:userId/role-mappings/applications-by-id/:application/composite', {
         realm : '@realm',
         userId : '@userId',
         application : "@application"
@@ -335,28 +335,28 @@ module.factory('CompositeApplicationRoleMapping', function($resource) {
 });
 
 module.factory('ApplicationRealmScopeMapping', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/applications/:application/scope-mappings/realm', {
+    return $resource(authUrl + '/admin/realms/:realm/applications-by-id/:application/scope-mappings/realm', {
         realm : '@realm',
         application : '@application'
     });
 });
 
 module.factory('ApplicationAvailableRealmScopeMapping', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/applications/:application/scope-mappings/realm/available', {
+    return $resource(authUrl + '/admin/realms/:realm/applications-by-id/:application/scope-mappings/realm/available', {
         realm : '@realm',
         application : '@application'
     });
 });
 
 module.factory('ApplicationCompositeRealmScopeMapping', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/applications/:application/scope-mappings/realm/composite', {
+    return $resource(authUrl + '/admin/realms/:realm/applications-by-id/:application/scope-mappings/realm/composite', {
         realm : '@realm',
         application : '@application'
     });
 });
 
 module.factory('ApplicationApplicationScopeMapping', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/applications/:application/scope-mappings/applications/:targetApp', {
+    return $resource(authUrl + '/admin/realms/:realm/applications-by-id/:application/scope-mappings/applications-by-id/:targetApp', {
         realm : '@realm',
         application : '@application',
         targetApp : '@targetApp'
@@ -364,7 +364,7 @@ module.factory('ApplicationApplicationScopeMapping', function($resource) {
 });
 
 module.factory('ApplicationAvailableApplicationScopeMapping', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/applications/:application/scope-mappings/applications/:targetApp/available', {
+    return $resource(authUrl + '/admin/realms/:realm/applications-by-id/:application/scope-mappings/applications-by-id/:targetApp/available', {
         realm : '@realm',
         application : '@application',
         targetApp : '@targetApp'
@@ -372,7 +372,7 @@ module.factory('ApplicationAvailableApplicationScopeMapping', function($resource
 });
 
 module.factory('ApplicationCompositeApplicationScopeMapping', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/applications/:application/scope-mappings/applications/:targetApp/composite', {
+    return $resource(authUrl + '/admin/realms/:realm/applications-by-id/:application/scope-mappings/applications-by-id/:targetApp/composite', {
         realm : '@realm',
         application : '@application',
         targetApp : '@targetApp'
@@ -407,14 +407,14 @@ module.factory('RealmSessionStats', function($resource) {
 });
 
 module.factory('RealmApplicationSessionStats', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/application-session-stats', {
+    return $resource(authUrl + '/admin/realms/:realm/application-by-id-session-stats', {
         realm : '@realm'
     });
 });
 
 
 module.factory('RoleApplicationComposites', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/roles-by-id/:role/composites/applications/:application', {
+    return $resource(authUrl + '/admin/realms/:realm/roles-by-id/:role/composites/applications-by-id/:application', {
         realm : '@realm',
         role : '@role',
         application : "@application"
@@ -468,7 +468,6 @@ function roleControl($scope, realm, role, roles, applications,
     $scope.selectedApplicationMappings = [];
     $scope.applicationMappings = [];
 
-    console.log('remove self');
     for (var j = 0; j < $scope.realmRoles.length; j++) {
         if ($scope.realmRoles[j].id == role.id) {
             var realmRole = $scope.realmRoles[j];
@@ -561,8 +560,8 @@ function roleControl($scope, realm, role, roles, applications,
 
 
     $scope.changeApplication = function() {
-        $scope.applicationRoles = ApplicationRole.query({realm : realm.realm, application : $scope.compositeApp.name}, function() {
-                $scope.applicationMappings = RoleApplicationComposites.query({realm : realm.realm, role : role.id, application : $scope.compositeApp.name}, function(){
+        $scope.applicationRoles = ApplicationRole.query({realm : realm.realm, application : $scope.compositeApp.id}, function() {
+                $scope.applicationMappings = RoleApplicationComposites.query({realm : realm.realm, role : role.id, application : $scope.compositeApp.id}, function(){
                     for (var i = 0; i < $scope.applicationMappings.length; i++) {
                         var role = $scope.applicationMappings[i];
                         for (var j = 0; j < $scope.applicationRoles.length; j++) {
@@ -618,7 +617,7 @@ module.factory('RoleById', function($resource) {
 });
 
 module.factory('ApplicationRole', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/applications/:application/roles/:role', {
+    return $resource(authUrl + '/admin/realms/:realm/applications-by-id/:application/roles/:role', {
         realm : '@realm',
         application : "@application",
         role : '@role'
@@ -630,7 +629,7 @@ module.factory('ApplicationRole', function($resource) {
 });
 
 module.factory('ApplicationClaims', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/applications/:application/claims', {
+    return $resource(authUrl + '/admin/realms/:realm/applications-by-id/:application/claims', {
         realm : '@realm',
         application : "@application"
     },  {
@@ -641,41 +640,41 @@ module.factory('ApplicationClaims', function($resource) {
 });
 
 module.factory('ApplicationSessionStats', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/applications/:application/session-stats', {
+    return $resource(authUrl + '/admin/realms/:realm/applications-by-id/:application/session-stats', {
         realm : '@realm',
         application : "@application"
     });
 });
 
 module.factory('ApplicationSessionStatsWithUsers', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/applications/:application/session-stats?users=true', {
+    return $resource(authUrl + '/admin/realms/:realm/applications-by-id/:application/session-stats?users=true', {
         realm : '@realm',
         application : "@application"
     });
 });
 
 module.factory('ApplicationSessionCount', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/applications/:application/session-count', {
+    return $resource(authUrl + '/admin/realms/:realm/applications-by-id/:application/session-count', {
         realm : '@realm',
         application : "@application"
     });
 });
 
 module.factory('ApplicationUserSessions', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/applications/:application/user-sessions', {
+    return $resource(authUrl + '/admin/realms/:realm/applications-by-id/:application/user-sessions', {
         realm : '@realm',
         application : "@application"
     });
 });
 
 module.factory('ApplicationLogoutAll', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/applications/:application/logout-all', {
+    return $resource(authUrl + '/admin/realms/:realm/applications-by-id/:application/logout-all', {
         realm : '@realm',
         application : "@application"
     });
 });
 module.factory('ApplicationLogoutUser', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/applications/:application/logout-user/:user', {
+    return $resource(authUrl + '/admin/realms/:realm/applications-by-id/:application/logout-user/:user', {
         realm : '@realm',
         application : "@application",
         user : "@user"
@@ -688,16 +687,63 @@ module.factory('RealmLogoutAll', function($resource) {
 });
 
 module.factory('ApplicationPushRevocation', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/applications/:application/push-revocation', {
+    return $resource(authUrl + '/admin/realms/:realm/applications-by-id/:application/push-revocation', {
         realm : '@realm',
         application : "@application"
     });
 });
 
+module.factory('ApplicationClusterNode', function($resource) {
+    return $resource(authUrl + '/admin/realms/:realm/applications-by-id/:application/nodes/:node', {
+        realm : '@realm',
+        application : "@application"
+    });
+});
 
+module.factory('ApplicationTestNodesAvailable', function($resource) {
+    return $resource(authUrl + '/admin/realms/:realm/applications-by-id/:application/test-nodes-available', {
+        realm : '@realm',
+        application : "@application"
+    });
+});
+
+module.factory('ApplicationCertificate', function($resource) {
+    return $resource(authUrl + '/admin/realms/:realm/applications-by-id/:application/certificates/:attribute', {
+            realm : '@realm',
+            application : "@application",
+            attribute: "@attribute"
+        });
+});
+
+module.factory('ApplicationCertificateGenerate', function($resource) {
+    return $resource(authUrl + '/admin/realms/:realm/applications-by-id/:application/certificates/:attribute/generate', {
+            realm : '@realm',
+            application : "@application",
+            attribute: "@attribute"
+        },
+        {
+            generate : {
+                method : 'POST'
+            }
+        });
+});
+
+module.factory('ApplicationCertificateDownload', function($resource) {
+    return $resource(authUrl + '/admin/realms/:realm/applications-by-id/:application/certificates/:attribute/download', {
+        realm : '@realm',
+        application : "@application",
+        attribute: "@attribute"
+    },
+        {
+            download : {
+                method : 'POST',
+                responseType: 'arraybuffer'
+            }
+        });
+});
 
 module.factory('Application', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/applications/:application', {
+    return $resource(authUrl + '/admin/realms/:realm/applications-by-id/:application', {
         realm : '@realm',
         application : '@application'
     },  {
@@ -708,7 +754,7 @@ module.factory('Application', function($resource) {
 });
 
 module.factory('ApplicationInstallation', function($resource) {
-    var url = authUrl + '/admin/realms/:realm/applications/:application/installation/json';
+    var url = authUrl + '/admin/realms/:realm/applications-by-id/:application/installation/json';
     return {
         url : function(parameters)
         {
@@ -717,7 +763,7 @@ module.factory('ApplicationInstallation', function($resource) {
     }
 });
 module.factory('ApplicationInstallationJBoss', function($resource) {
-    var url = authUrl + '/admin/realms/:realm/applications/:application/installation/jboss';
+    var url = authUrl + '/admin/realms/:realm/applications-by-id/:application/installation/jboss';
     return {
         url : function(parameters)
      {
@@ -727,7 +773,7 @@ module.factory('ApplicationInstallationJBoss', function($resource) {
 });
 
 module.factory('ApplicationCredentials', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/applications/:application/client-secret', {
+    return $resource(authUrl + '/admin/realms/:realm/applications-by-id/:application/client-secret', {
         realm : '@realm',
         application : '@application'
     },  {
@@ -738,7 +784,7 @@ module.factory('ApplicationCredentials', function($resource) {
 });
 
 module.factory('ApplicationOrigins', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/applications/:application/allowed-origins', {
+    return $resource(authUrl + '/admin/realms/:realm/applications-by-id/:application/allowed-origins', {
         realm : '@realm',
         application : '@application'
     },  {
@@ -750,7 +796,7 @@ module.factory('ApplicationOrigins', function($resource) {
 });
 
 module.factory('OAuthClient', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/oauth-clients/:oauth', {
+    return $resource(authUrl + '/admin/realms/:realm/oauth-clients-by-id/:oauth', {
         realm : '@realm',
         oauth : '@oauth'
     },  {
@@ -761,7 +807,7 @@ module.factory('OAuthClient', function($resource) {
 });
 
 module.factory('OAuthClientClaims', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/oauth-clients/:oauth/claims', {
+    return $resource(authUrl + '/admin/realms/:realm/oauth-clients-by-id/:oauth/claims', {
         realm : '@realm',
         oauth : "@oauth"
     },  {
@@ -773,7 +819,7 @@ module.factory('OAuthClientClaims', function($resource) {
 
 
 module.factory('OAuthClientCredentials', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/oauth-clients/:oauth/client-secret', {
+    return $resource(authUrl + '/admin/realms/:realm/oauth-clients-by-id/:oauth/client-secret', {
         realm : '@realm',
         oauth : '@oauth'
     },  {
@@ -784,29 +830,44 @@ module.factory('OAuthClientCredentials', function($resource) {
 
 });
 
+module.factory('OAuthCertificate', function($resource) {
+    return $resource(authUrl + '/admin/realms/:realm/oauth-clients-by-id/:oauth/certificates', {
+        realm : '@realm',
+        oauth : '@oauth'
+    });
+});
+
+module.factory('OAuthCertificateDownload', function($resource) {
+    return $resource(authUrl + '/admin/realms/:realm/oauth-clients-by-id/:oauth/certificates/download', {
+        realm : '@realm',
+        oauth : '@oauth'
+    });
+});
+
+
 module.factory('OAuthClientRealmScopeMapping', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/oauth-clients/:oauth/scope-mappings/realm', {
+    return $resource(authUrl + '/admin/realms/:realm/oauth-clients-by-id/:oauth/scope-mappings/realm', {
         realm : '@realm',
         oauth : '@oauth'
     });
 });
 
 module.factory('OAuthClientCompositeRealmScopeMapping', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/oauth-clients/:oauth/scope-mappings/realm/composite', {
+    return $resource(authUrl + '/admin/realms/:realm/oauth-clients-by-id/:oauth/scope-mappings/realm/composite', {
         realm : '@realm',
         oauth : '@oauth'
     });
 });
 
 module.factory('OAuthClientAvailableRealmScopeMapping', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/oauth-clients/:oauth/scope-mappings/realm/available', {
+    return $resource(authUrl + '/admin/realms/:realm/oauth-clients-by-id/:oauth/scope-mappings/realm/available', {
         realm : '@realm',
         oauth : '@oauth'
     });
 });
 
 module.factory('OAuthClientApplicationScopeMapping', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/oauth-clients/:oauth/scope-mappings/applications/:targetApp', {
+    return $resource(authUrl + '/admin/realms/:realm/oauth-clients-by-id/:oauth/scope-mappings/applications-by-id/:targetApp', {
         realm : '@realm',
         oauth : '@oauth',
         targetApp : '@targetApp'
@@ -814,7 +875,7 @@ module.factory('OAuthClientApplicationScopeMapping', function($resource) {
 });
 
 module.factory('OAuthClientCompositeApplicationScopeMapping', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/oauth-clients/:oauth/scope-mappings/applications/:targetApp/composite', {
+    return $resource(authUrl + '/admin/realms/:realm/oauth-clients-by-id/:oauth/scope-mappings/applications-by-id/:targetApp/composite', {
         realm : '@realm',
         oauth : '@oauth',
         targetApp : '@targetApp'
@@ -822,7 +883,7 @@ module.factory('OAuthClientCompositeApplicationScopeMapping', function($resource
 });
 
 module.factory('OAuthClientAvailableApplicationScopeMapping', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/oauth-clients/:oauth/scope-mappings/applications/:targetApp/available', {
+    return $resource(authUrl + '/admin/realms/:realm/oauth-clients-by-id/:oauth/scope-mappings/applications-by-id/:targetApp/available', {
         realm : '@realm',
         oauth : '@oauth',
         targetApp : '@targetApp'
@@ -832,8 +893,8 @@ module.factory('OAuthClientAvailableApplicationScopeMapping', function($resource
 
 
 module.factory('OAuthClientInstallation', function($resource) {
-    var url = authUrl + '/admin/realms/:realm/oauth-clients/:oauth/installation';
-    var resource = $resource(authUrl + '/admin/realms/:realm/oauth-clients/:oauth/installation', {
+    var url = authUrl + '/admin/realms/:realm/oauth-clients-by-id/:oauth/installation';
+    var resource = $resource(authUrl + '/admin/realms/:realm/oauth-clients-by-id/:oauth/installation', {
         realm : '@realm',
         oauth : '@oauth'
     },  {
