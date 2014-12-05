@@ -24,7 +24,7 @@
 
 <module xmlns="urn:jboss:module:1.1" name="org.keycloak.keycloak-adapter-core">
     <resources>
-        <resource-root path="keycloak-adapter-core-1.0.3.Final.jar"/>
+        <resource-root path="keycloak-adapter-core-1.1.0.Beta1.jar"/>
         <!-- Insert resources here -->
     </resources>
     <dependencies>

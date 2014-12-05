@@ -1,12 +1,12 @@
 Name: wildfly
 Cartridge-Short-Name: WILDFLY
-Display-Name: Keycloak 1.0.3.Final
+Display-Name: Keycloak 1.1.0.Beta1
 Description: "Authentication and Authorization Server."
 Version: '8'
 License: LGPL
 License-Url: http://www.gnu.org/copyleft/lesser.txt
 Vendor: WildFly
-Cartridge-Version: '0.0.5'
+Cartridge-Version: '0.0.6'
 Cartridge-Vendor: wildfly
 Categories:
   - service

@@ -4,7 +4,7 @@
     <div id="content">
         <ol class="breadcrumb" data-ng-hide="create">
             <li><a href="#/realms/{{realm.realm}}/applications">Applications</a></li>
-            <li><a href="#/realms/{{realm.realm}}/applications/{{application.name}}">{{application.name}}</a></li>
+            <li><a href="#/realms/{{realm.realm}}/applications/{{application.id}}">{{application.name}}</a></li>
             <li class="active">Settings</li>
         </ol>
         <ol class="breadcrumb" data-ng-show="create">
@@ -31,6 +31,19 @@
                     <span tooltip-placement="right" tooltip="Disabled applications cannot initiate a login or have obtain access tokens." class="fa fa-info-circle"></span>
                 </div>
                 <div class="form-group">
+                    <label class="col-sm-2 control-label" for="protocol">Client Protocol</label>
+                    <div class="col-sm-6">
+                        <div class="select-kc">
+                            <select id="protocol"
+                                    ng-change="changeProtocol()"
+                                    ng-model="protocol"
+                                    ng-options="aProtocol for aProtocol in protocols">
+                            </select>
+                        </div>
+                    </div>
+                    <span tooltip-placement="right" tooltip="'Confidential' applications require a secret to initiate login protocol.  'Public' clients do not require a secret.  'Bearer-only' applications are web services that never initiate a login." class="fa fa-info-circle"></span>
+                </div>
+                <div class="form-group" data-ng-show="protocol == 'openid-connect'">
                     <label class="col-sm-2 control-label" for="accessType">Access Type</label>
                     <div class="col-sm-6">
                         <div class="select-kc">
@@ -43,6 +56,69 @@
                     </div>
                     <span tooltip-placement="right" tooltip="'Confidential' applications require a secret to initiate login protocol.  'Public' clients do not require a secret.  'Bearer-only' applications are web services that never initiate a login." class="fa fa-info-circle"></span>
                 </div>
+                <div class="form-group clearfix block" data-ng-show="protocol == 'saml'">
+                    <label class="col-sm-2 control-label" for="samlServerSignature">Include AuthnStatement</label>
+                    <div class="col-sm-6">
+                        <input ng-model="samlAuthnStatement" ng-click="switchChange()" name="samlAuthnStatement" id="samlAuthnStatement" onoffswitch />
+                    </div>
+                    <span tooltip-placement="right" tooltip="Should a statement specifying the method and timestamp be included in login responses?" class="fa fa-info-circle"></span>
+                </div>
+                <div class="form-group clearfix block" data-ng-show="protocol == 'saml'">
+                    <label class="col-sm-2 control-label" for="samlMultiValuedRoles">Multi-valued Roles</label>
+                    <div class="col-sm-6">
+                        <input ng-model="samlMultiValuedRoles" ng-click="switchChange()" name="samlMultiValuedRoles" id="samlMultiValuedRoles" onoffswitch />
+                    </div>
+                    <span tooltip-placement="right" tooltip="'On' means that there will be one role attribute with multiple values for each role in SAML response.  'Off' means that there will be an attribute defined for each role." class="fa fa-info-circle"></span>
+                </div>
+                <div class="form-group clearfix block" data-ng-show="protocol == 'saml'">
+                    <label class="col-sm-2 control-label" for="samlServerSignature">Sign Documents</label>
+                    <div class="col-sm-6">
+                        <input ng-model="samlServerSignature" ng-click="switchChange()" name="samlServerSignature" id="samlServerSignature" onoffswitch />
+                    </div>
+                    <span tooltip-placement="right" tooltip="Should SAML documents be signed by the realm?" class="fa fa-info-circle"></span>
+                </div>
+                <div class="form-group clearfix block" data-ng-show="protocol == 'saml'">
+                    <label class="col-sm-2 control-label" for="samlAssertionSignature">Sign Assertions</label>
+                    <div class="col-sm-6">
+                        <input ng-model="samlAssertionSignature" ng-click="switchChange()" name="samlAssertionSignature" id="samlAssertionSignature" onoffswitch />
+                    </div>
+                    <span tooltip-placement="right" tooltip="Should assertions inside SAML documents be signed?  This setting isn't needed if document is already being signed." class="fa fa-info-circle"></span>
+                </div>
+                <div class="form-group" data-ng-show="(samlAssertionSignature || samlServerSignature) && protocol == 'saml'">
+                    <label class="col-sm-2 control-label" for="protocol">Signature Algorithm</label>
+                    <div class="col-sm-6">
+                        <div class="select-kc">
+                            <select id="signatureAlgorithm"
+                                    ng-change="changeAlgorithm()"
+                                    ng-model="signatureAlgorithm"
+                                    ng-options="alg for alg in signatureAlgorithms">
+                            </select>
+                        </div>
+                    </div>
+                    <span tooltip-placement="right" tooltip="The signature algorithm to use to sign documents." class="fa fa-info-circle"></span>
+                </div>
+                <div class="form-group clearfix block" data-ng-show="protocol == 'saml'">
+                    <label class="col-sm-2 control-label" for="samlEncrypt">Encrypt Assertions</label>
+                    <div class="col-sm-6">
+                        <input ng-model="samlEncrypt" ng-click="switchChange()" name="samlEncrypt" id="samlEncrypt" onoffswitch />
+                    </div>
+                    <span tooltip-placement="right" tooltip="Should SAML assertions be encrypted with client's public key using AES?" class="fa fa-info-circle"></span>
+                </div>
+                <div class="form-group clearfix block" data-ng-show="protocol == 'saml'">
+                    <label class="col-sm-2 control-label" for="samlClientSignature">Client Signature Required</label>
+                    <div class="col-sm-6">
+                        <input ng-model="samlClientSignature" ng-click="switchChange()" name="samlClientSignature" id="samlClientSignature" onoffswitch />
+                    </div>
+                    <span tooltip-placement="right" tooltip="Will the client sign their saml requests and responses?  And should they be validated?" class="fa fa-info-circle"></span>
+                </div>
+                <div class="form-group clearfix block" data-ng-show="protocol == 'saml'">
+                    <label class="col-sm-2 control-label" for="samlForcePostBinding">Force POST Binding</label>
+                    <div class="col-sm-6">
+                        <input ng-model="samlForcePostBinding" ng-click="switchChange()" name="samlForcePostBinding" id="samlForcePostBinding" onoffswitch />
+                    </div>
+                    <span tooltip-placement="right" tooltip="Always use POST binding for responses." class="fa fa-info-circle"></span>
+                </div>
+
                 <div class="form-group" data-ng-show="!application.bearerOnly">
                     <label class="col-sm-2 control-label" for="newRedirectUri">Redirect URI <span class="required" data-ng-show="create">*</span></label>
                     <div class="col-sm-6 multiple" ng-repeat="redirectUri in application.redirectUris">
@@ -68,12 +144,12 @@
                     <span tooltip-placement="right" tooltip="Valid URI pattern a browser can redirect to after a successful login or logout.  Simple wildcards are allowed i.e. 'http://example.com/*'.  Relative path can be specified too i.e. /my/relative/path/*.  Relative paths will generate a redirect URI using the request's host and port." class="fa fa-info-circle"></span>
                 </div>
                 <div class="form-group" data-ng-show="!application.bearerOnly && !create">
-                    <label class="col-sm-2 control-label" for="baseUrl">Base URL</label>
+                    <label class="col-sm-2 control-label" for="baseUrl">Default Redirect URL</label>
                     <div class="col-sm-6">
                         <input class="form-control" type="text" name="baseUrl" id="baseUrl"
                                data-ng-model="application.baseUrl">
                     </div>
-                    <span tooltip-placement="right" tooltip="Optional URL to use when linking to this application. i.e. the welcome page." class="fa fa-info-circle"></span>
+                    <span tooltip-placement="right" tooltip="Default URL to use when no redirect URI is specified.  This URL will also be used when the auth server needs to link to the application for any reason." class="fa fa-info-circle"></span>
                 </div>
                 <div class="form-group" data-ng-hide="create">
                     <label class="col-sm-2 control-label" for="adminUrl">Admin URL</label>
@@ -83,7 +159,7 @@
                     </div>
                     <span tooltip-placement="right" tooltip="URL to the admin interface of the application.  Set this if the application supports the adapter REST API.  This REST API allows the auth server to push revocation policies and other adminstrative tasks.  Usually this is set to the base URL of the application." class="fa fa-info-circle"></span>
                 </div>
-                <div class="form-group" data-ng-show="!application.bearerOnly && !create">
+                <div class="form-group" data-ng-show="!application.bearerOnly && !create && protocol == 'openid-connect'">
                     <label class="col-sm-2 control-label" for="newWebOrigin">Web Origin</label>
                     <div class="col-sm-6 multiple" ng-repeat="webOrigin in application.webOrigins">
                         <div class="input-group kc-item-deletable">
@@ -95,7 +171,7 @@
                             </span>
                         </div>
                     </div>
-                    <div class="col-sm-6 multiple">
+                    <div class="col-sm-6 multiple" >
                         <div class="input-group">
                             <input class="form-control" type="text" name="newWebOrigin" id="newWebOrigin"
                                    placeholder="New Web Origin..." data-ng-model="newWebOrigin"
