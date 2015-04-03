@@ -296,10 +296,12 @@ function start() {
     ishttpup || rc=$?
     if [ $rc -eq 1 ]; then
       echo "Timed out waiting for http listening port for $cartridge_type process"
-      exit 1
+    #  exit 1
+      exit 0
     elif [ $rc -eq 2 ]; then
       echo "$cartridge_type process failed to start"
-      exit 2
+    #  exit 2
+      exit 0
     fi
 
     waitondeployments
