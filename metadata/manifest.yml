@@ -3,7 +3,7 @@ Cartridge-Short-Name: WILDFLY
 Display-Name: Keycloak 1.1.0.Final
 Description: "Authentication and Authorization Server."
 Version: '8'
-Source-Url: https://github.com/openshift-cartridges/openshift-wildfly-cartridge/archive/wildfly-8.zip
+Source-Url: https://github.com/planonsoftware/openshift-keycloak-cartridge/archive/master.zip
 License: LGPL
 License-Url: http://www.gnu.org/copyleft/lesser.txt
 Vendor: WildFly
@@ -104,3 +104,4 @@ Endpoints:
     Private-Port: 9990
 Additional-Control-Actions:
     - threaddump
+    
