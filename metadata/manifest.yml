@@ -87,10 +87,10 @@ Endpoints:
     - http
     - ws
     Mappings:
-  - Frontend: ''
-    Backend: ''
-    Options:
-      websocket: true
+    - Frontend: ''
+      Backend: ''
+      Options:
+        websocket: true
     - Frontend: /health
       Backend: ''
       Options:
@@ -104,3 +104,4 @@ Endpoints:
     Private-Port: 9990
 Additional-Control-Actions:
     - threaddump
+    
