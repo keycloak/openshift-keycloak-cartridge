@@ -1,6 +1,6 @@
 Name: wildfly
 Cartridge-Short-Name: WILDFLY
-Display-Name: Keycloak 1.2.0.Final
+Display-Name: Keycloak 1.9.5.Final
 Description: "Authentication and Authorization Server."
 Version: '10'
 Source-Url: https://github.com/openshift-cartridges/openshift-wildfly-cartridge/archive/wildfly-10.zip
