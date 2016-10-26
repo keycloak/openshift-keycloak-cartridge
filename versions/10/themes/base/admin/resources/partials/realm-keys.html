@@ -1,0 +1,37 @@
+<div class="col-sm-9 col-md-10 col-sm-push-3 col-md-push-2">
+    <kc-tabs-realm></kc-tabs-realm>
+
+    <ul class="nav nav-tabs nav-tabs-pf">
+        <li class="active"><a href="#/realms/{{realm.realm}}/keys">{{:: 'active' | translate}}</a></li>
+        <li><a href="#/realms/{{realm.realm}}/keys/list">{{:: 'all' | translate}}</a></li>
+        <li><a href="#/realms/{{realm.realm}}/keys/providers">{{:: 'providers' | translate}}</a></li>
+    </ul>
+
+    <table class="table table-striped table-bordered">
+        <thead>
+        <tr>
+            <th>{{:: 'type' | translate}}</th>
+            <th>{{:: 'kid' | translate}}</th>
+            <th>{{:: 'provider' | translate}}</th>
+            <th>{{:: 'publicKey' | translate}}</th>
+            <th>{{:: 'certificate' | translate}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="key in active">
+            <td>{{key.type}}</td>
+            <td>{{key.kid}}</td>
+            <td><a href="#/realms/{{realm.realm}}/keys/providers/{{key.provider.providerId}}/{{key.provider.id}}">{{key.provider.name}}</a></td>
+
+            <td data-ng-show="key.publicKey" class="kc-action-cell" data-ng-click="viewKey(key.publicKey)">{{:: 'view' | translate}}</td>
+            <td data-ng-hide="key.publicKey"></td>
+
+            <td data-ng-show="key.certificate" class="kc-action-cell" data-ng-click="viewKey(key.certificate)">{{:: 'view' | translate}}</td>
+            <td data-ng-hide="key.certificate"></td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+<kc-menu></kc-menu>
