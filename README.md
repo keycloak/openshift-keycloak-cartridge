@@ -12,7 +12,7 @@ You can also start a specific version by adding ?commit<VERSION> to the url. For
 
 ## Thanks to the following:
 
-https://github.com/developercorey/openshift-wildfly-cartridge
+https://github.com/openshift-cartridges/openshift-wildfly-cartridge
 
 ## Updating Keycloak
 
