@@ -14,6 +14,3 @@ You can also start a specific version by adding ?commit<VERSION> to the url. For
 
 https://github.com/openshift-cartridges/openshift-wildfly-cartridge
 
-## Updating Keycloak
-
-See https://github.com/keycloak/keycloak/blob/master/misc/ReleaseProcess.md
