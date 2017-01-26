@@ -21,7 +21,7 @@
     </properties>
 
     <resources>
-        <resource-root path="keycloak-kerberos-federation-2.5.0.CR1.jar"/>
+        <resource-root path="keycloak-kerberos-federation-2.5.1.Final.jar"/>
     </resources>
 
     <dependencies>

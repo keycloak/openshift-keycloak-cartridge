@@ -1228,7 +1228,7 @@ module.controller('LDAPUserStorageCtrl', function($scope, $location, Notificatio
 
     $scope.cancel = function() {
         if ($scope.create) {
-            $location.url("/realms/" + realm.realm + "/user-storage");
+            $location.url("/realms/" + realm.realm + "/user-federation");
         } else {
             $route.reload();
         }
@@ -1261,7 +1261,9 @@ module.controller('LDAPUserStorageCtrl', function($scope, $location, Notificatio
             connectionUrl: ldapConfig.connectionUrl,
             bindDn: ldapConfig.bindDn,
             bindCredential: ldapConfig.bindCredential,
-            useTruststoreSpi: ldapConfig.useTruststoreSpi
+            useTruststoreSpi: ldapConfig.useTruststoreSpi,
+            connectionTimeout: ldapConfig.connectionTimeout,
+            componentId: instance.id
         };
     };
 
