@@ -24,7 +24,7 @@
 
     <resources>
         <resource-root path="."/>
-        <resource-root path="keycloak-wildfly-server-subsystem-2.5.0.CR1.jar"/>
+        <resource-root path="keycloak-wildfly-server-subsystem-2.5.4.Final.jar"/>
     </resources>
 
     <dependencies>

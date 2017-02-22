@@ -743,7 +743,7 @@ module.controller('ResourceServerPermissionCtrl', function($scope, $http, $route
 module.controller('ResourceServerPolicyDroolsDetailCtrl', function($scope, $http, $route, realm, client, PolicyController) {
     PolicyController.onInit({
         getPolicyType : function() {
-            return "drools";
+            return "rules";
         },
 
         onInit : function() {
@@ -754,7 +754,7 @@ module.controller('ResourceServerPolicyDroolsDetailCtrl', function($scope, $http
                     policy = $scope.policy;
                 }
 
-                $http.post(authUrl + '/admin/realms/'+ $route.current.params.realm + '/clients/' + client.id + '/authz/resource-server/policy/drools/resolveModules'
+                $http.post(authUrl + '/admin/realms/'+ $route.current.params.realm + '/clients/' + client.id + '/authz/resource-server/policy/rules/resolveModules'
                         , policy).success(function(data) {
                             $scope.drools.moduleNames = data;
                             $scope.resolveSessions();
@@ -762,7 +762,7 @@ module.controller('ResourceServerPolicyDroolsDetailCtrl', function($scope, $http
             }
 
             $scope.resolveSessions = function() {
-                $http.post(authUrl + '/admin/realms/'+ $route.current.params.realm + '/clients/' + client.id + '/authz/resource-server/policy/drools/resolveSessions'
+                $http.post(authUrl + '/admin/realms/'+ $route.current.params.realm + '/clients/' + client.id + '/authz/resource-server/policy/rules/resolveSessions'
                         , $scope.policy).success(function(data) {
                             $scope.drools.moduleSessions = data;
                         });
@@ -890,7 +890,12 @@ module.controller('ResourceServerPolicyResourceDetailCtrl', function($scope, $ro
         },
 
         onUpdate : function() {
-            $scope.policy.config.resources = JSON.stringify([$scope.policy.config.resources._id]);
+            if ($scope.policy.config.resources && $scope.policy.config.resources._id) {
+                $scope.policy.config.resources = JSON.stringify([$scope.policy.config.resources._id]);
+            } else {
+                delete $scope.policy.config.resources
+            }
+
             var policies = [];
 
             for (i = 0; i < $scope.policy.config.applyPolicies.length; i++) {
@@ -920,7 +925,11 @@ module.controller('ResourceServerPolicyResourceDetailCtrl', function($scope, $ro
         },
 
         onCreate : function() {
-            $scope.policy.config.resources = JSON.stringify([$scope.policy.config.resources._id]);
+            if ($scope.policy.config.resources && $scope.policy.config.resources._id) {
+                $scope.policy.config.resources = JSON.stringify([$scope.policy.config.resources._id]);
+            } else {
+                delete $scope.policy.config.resources
+            }
 
             var policies = [];
 

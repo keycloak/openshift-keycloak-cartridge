@@ -22,7 +22,7 @@
     </properties>
 
     <resources>
-        <resource-root path="keycloak-server-spi-private-2.5.0.CR1.jar"/>
+        <resource-root path="keycloak-server-spi-private-2.5.4.Final.jar"/>
     </resources>
 
     <dependencies>
