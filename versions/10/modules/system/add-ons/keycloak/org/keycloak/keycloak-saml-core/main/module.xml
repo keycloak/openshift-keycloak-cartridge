@@ -21,7 +21,7 @@
     </properties>
 
     <resources>
-        <resource-root path="keycloak-saml-core-2.5.0.CR1.jar"/>
+        <resource-root path="keycloak-saml-core-3.0.0.CR1.jar"/>
     </resources>
 
     <dependencies>
