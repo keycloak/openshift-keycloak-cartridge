@@ -320,12 +320,57 @@ module.factory('RealmLDAPConnectionTester', function($resource) {
     return $resource(authUrl + '/admin/realms/:realm/testLDAPConnection');
 });
 
+module.factory('RealmSMTPConnectionTester', function($resource) {
+    return $resource(authUrl + '/admin/realms/:realm/testSMTPConnection/:config', {
+        realm : '@realm',
+        config : '@config'
+    }, {
+       send: {
+           method: 'POST'
+       }
+    });
+});
+
 module.service('ServerInfo', function($resource, $q, $http) {
     var info = {};
     var delay = $q.defer();
 
-    $http.get(authUrl + '/admin/serverinfo').success(function(data) {
+    function copyInfo(data, info) {
         angular.copy(data, info);
+
+        info.listProviderIds = function(spi) {
+            var providers = info.providers[spi].providers;
+            var ids = Object.keys(providers);
+            ids.sort(function(a, b) {
+                var s1;
+                var s2;
+
+                if (providers[a].order != providers[b].order) {
+                    s1 = providers[b].order;
+                    s2 = providers[a].order;
+                } else {
+                    s1 = a;
+                    s2 = b;
+                }
+
+                if (s1 < s2) {
+                    return -1;
+                } else if (s1 > s2) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            });
+            return ids;
+        }
+
+        info.featureEnabled = function(provider) {
+            return info.profileInfo.disabledFeatures.indexOf(provider) == -1;
+        }
+    }
+
+    $http.get(authUrl + '/admin/serverinfo').then(function(response) {
+        copyInfo(response.data, info);
         delay.resolve(info);
     });
 
@@ -334,8 +379,8 @@ module.service('ServerInfo', function($resource, $q, $http) {
             return info;
         },
         reload: function() {
-            $http.get(authUrl + '/admin/serverinfo').success(function(data) {
-                angular.copy(data, info);
+            $http.get(authUrl + '/admin/serverinfo').then(function(response) {
+                copyInfo(response.data, info);
             });
         },
         promise: delay.promise
@@ -496,7 +541,8 @@ module.factory('UserCredentials', function($resource) {
 module.factory('UserExecuteActionsEmail', function($resource) {
     return $resource(authUrl + '/admin/realms/:realm/users/:userId/execute-actions-email', {
         realm : '@realm',
-        userId : '@userId'
+        userId : '@userId',
+        lifespan : '@lifespan',
     }, {
         update : {
             method : 'PUT'
@@ -731,7 +777,7 @@ function roleControl($scope, realm, role, roles, clients,
     $scope.addRealmRole = function() {
         $scope.compositeSwitchDisabled=true;
         $http.post(authUrl + '/admin/realms/' + realm.realm + '/roles-by-id/' + role.id + '/composites',
-                $scope.selectedRealmRoles).success(function() {
+                $scope.selectedRealmRoles).then(function() {
                 for (var i = 0; i < $scope.selectedRealmRoles.length; i++) {
                     var role = $scope.selectedRealmRoles[i];
                     var idx = $scope.realmRoles.indexOf($scope.selectedRealmRoles[i]);
@@ -748,7 +794,7 @@ function roleControl($scope, realm, role, roles, clients,
     $scope.deleteRealmRole = function() {
         $scope.compositeSwitchDisabled=true;
         $http.delete(authUrl + '/admin/realms/' + realm.realm + '/roles-by-id/' + role.id + '/composites',
-            {data : $scope.selectedRealmMappings, headers : {"content-type" : "application/json"}}).success(function() {
+            {data : $scope.selectedRealmMappings, headers : {"content-type" : "application/json"}}).then(function() {
                 for (var i = 0; i < $scope.selectedRealmMappings.length; i++) {
                     var role = $scope.selectedRealmMappings[i];
                     var idx = $scope.realmMappings.indexOf($scope.selectedRealmMappings[i]);
@@ -765,7 +811,7 @@ function roleControl($scope, realm, role, roles, clients,
     $scope.addClientRole = function() {
         $scope.compositeSwitchDisabled=true;
         $http.post(authUrl + '/admin/realms/' + realm.realm + '/roles-by-id/' + role.id + '/composites',
-                $scope.selectedClientRoles).success(function() {
+                $scope.selectedClientRoles).then(function() {
                 for (var i = 0; i < $scope.selectedClientRoles.length; i++) {
                     var role = $scope.selectedClientRoles[i];
                     var idx = $scope.clientRoles.indexOf($scope.selectedClientRoles[i]);
@@ -781,7 +827,7 @@ function roleControl($scope, realm, role, roles, clients,
     $scope.deleteClientRole = function() {
         $scope.compositeSwitchDisabled=true;
         $http.delete(authUrl + '/admin/realms/' + realm.realm + '/roles-by-id/' + role.id + '/composites',
-            {data : $scope.selectedClientMappings, headers : {"content-type" : "application/json"}}).success(function() {
+            {data : $scope.selectedClientMappings, headers : {"content-type" : "application/json"}}).then(function() {
                 for (var i = 0; i < $scope.selectedClientMappings.length; i++) {
                     var role = $scope.selectedClientMappings[i];
                     var idx = $scope.clientMappings.indexOf($scope.selectedClientMappings[i]);
@@ -1208,11 +1254,6 @@ module.factory('TimeUnit', function() {
             case 'Days': return Math.ceil(time / 86400);
             default: throw 'invalid unit ' + unit;
         }
-    }
-
-    t.convert = function(time, from, to) {
-        var seconds = t.toSeconds(time, from);
-        return t.toUnit(seconds, to);
     }
 
     return t;
@@ -1692,12 +1733,23 @@ module.factory('Components', function($resource, ComponentUtils) {
     });
 });
 
-module.factory('UserStorageSync', function($resource) {
-    return $resource(authUrl + '/admin/realms/:realm/user-storage/:componentId/sync', {
+module.factory('UserStorageOperations', function($resource) {
+    var object = {}
+    object.sync = $resource(authUrl + '/admin/realms/:realm/user-storage/:componentId/sync', {
         realm : '@realm',
         componentId : '@componentId'
     });
+    object.removeImportedUsers = $resource(authUrl + '/admin/realms/:realm/user-storage/:componentId/remove-imported-users', {
+        realm : '@realm',
+        componentId : '@componentId'
+    });
+    object.unlinkUsers = $resource(authUrl + '/admin/realms/:realm/user-storage/:componentId/unlink-users', {
+        realm : '@realm',
+        componentId : '@componentId'
+    });
+    return object;
 });
+
 
 module.factory('ClientRegistrationPolicyProviders', function($resource) {
     return $resource(authUrl + '/admin/realms/:realm/client-registration-policy/providers', {
