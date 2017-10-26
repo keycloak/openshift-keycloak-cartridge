@@ -1,1 +1,1 @@
-Server overlay for WildFly 10.0.0.Final
+Server overlay for WildFly 11.0.0.Final
